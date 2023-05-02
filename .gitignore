@@ -1,0 +1,9 @@
+credentials.storage
+google-secret.json
+days
+posts
+
+audio/*
+html/*
+png/*
+video/*
