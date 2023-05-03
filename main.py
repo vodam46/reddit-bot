@@ -1,10 +1,3 @@
-# get a top of today post
-# get comments
-#   follow chain 1/3 of previous upvotes
-# convert to voice
-# generate images of each comment/chain
-# stich into video
-# upload to youtube
 import praw
 from gtts import gTTS
 from bs4 import BeautifulSoup
@@ -39,11 +32,6 @@ channel.login("google-secret.json", "credentials.storage")
 
 def clean(s):
     return ''.join([c for c in s if c in set(string.printable)])
-def comment_sort(c):
-    if type(c) != praw.models.MoreComments:
-        return c.score
-    else:
-        return 0
 def main():
     posts = reddit.subreddit("askreddit").top(time_filter="day")
     for post in posts:
@@ -74,7 +62,7 @@ def main():
     i = 1
     comments = [post.id+"_0"]
     try:
-        for comment in sorted(post.comments, key=comment_sort, reverse=True):
+        for comment in sorted(post.comments, key=lambda c: c.score if type(c) != praw.models.MoreComments else 0, reverse=True):
             if comment.body != "[deleted]" and comment.body != "[ Removed by Reddit ]":
                 print(f"{i} {length} {comment.score} comment:\n {comment.body}")
 
@@ -131,7 +119,7 @@ def main():
     video.set_default_language("en-US")
 
     video.set_embeddable(True)
-    video.set_privacy_status("public")
+    video.set_privacy_status("private")
 
     video.set_thumbnail_path("png/"+post.id+"_0.png")
 
